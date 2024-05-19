@@ -5,7 +5,7 @@ $dbuser = "GGMC";
 $dbpass = "thelegend";
 $dbname = "";
 
-if(!$con = mysqli_connect($dbhost,$dbuser,$dbpass,$dbname))
+if(!$con = mysqli_connect($dbhost,$dbuser,$dbpass))
 {
 
 	die("failed to connect!");
