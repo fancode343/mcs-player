@@ -1,11 +1,11 @@
 <?php
 
-$dbhost = "Dsbot-database-465e21d6d5.onlitegix.com";
-$dbuser = "GGMC";
+$dbhost = "gran-89a5cecf05.onlitegix.com";
+$dbuser = "ggmc";
 $dbpass = "thelegend";
-$dbname = "";
+$dbname = "gran";
 
-if(!$con = mysqli_connect($dbhost,$dbuser,$dbpass))
+if(!$con = mysqli_connect($dbhost,$dbuser,$dbpass,$dbname))
 {
 
 	die("failed to connect!");
