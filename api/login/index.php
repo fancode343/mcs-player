@@ -16,7 +16,7 @@ session_start();
 		{
 
 			//read from database
-			$query = "select * from users where username = '$username' limit 1";
+			$query = "select * from Users where username = '$username' limit 1";
 			$result = mysqli_query($con, $query);
 
 			if($result)
