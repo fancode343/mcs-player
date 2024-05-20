@@ -18,12 +18,12 @@ $sql = "CREATE TABLE Users (
 )";
 
 // Execute query and check for errors
-if ($conn->query($sql) === TRUE) {
+if ($con->query($sql) === TRUE) {
     echo "Table Users created successfully";
 } else {
     echo "Error creating table: " . $conn->error;
 }
 
 // Close the connection
-$conn->close();
+$con->close();
 ?>
