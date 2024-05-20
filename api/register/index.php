@@ -22,7 +22,7 @@ session_start();
 
 			//save to database
 			$user_id = random_num(20);
-			$query = "insert into MCDISC (user_id,username,email,age,gender,wdywtj,phoneCode,fbprof,dsnm) values ('$user_id','$username','$email','$age','$gender','$wdywtj','$phoneCode','$fbprof','$dsnm')";
+			$query = "insert into Users (user_id,username,email,age,gender,wdywtj,phoneCode,fbprof,dsnm) values ('$user_id','$username','$email','$age','$gender','$wdywtj','$phoneCode','$fbprof','$dsnm')";
 
 
 			mysqli_query($con, $query);
