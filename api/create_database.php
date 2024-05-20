@@ -5,7 +5,7 @@ include("/var/task/user/api/connection.php");
 // SQL query to create table
 $sql = "CREATE TABLE Users (
     id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id VARCHAR(20) PRIMARY KEY,
+    user_id VARCHAR(20),
     username VARCHAR(50),
     email VARCHAR(100),
     age INT,
@@ -14,16 +14,16 @@ $sql = "CREATE TABLE Users (
     phoneCode VARCHAR(15),
     fbprof VARCHAR(255),
     dsnm VARCHAR(255)
-
 )";
 
 // Execute query and check for errors
 if ($con->query($sql) === TRUE) {
     echo "Table Users created successfully";
 } else {
-    echo "Error creating table: " . $conn->error;
+    echo "Error creating table: " . $con->error;
 }
 
 // Close the connection
 $con->close();
 ?>
+
