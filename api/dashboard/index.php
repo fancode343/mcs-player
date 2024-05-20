@@ -1,8 +1,7 @@
 <?php 
 session_start();
-
-	include("../connection.php");
-	include("../functions.php");
+	include("/var/task/user/api/connection.php");
+	include("/var/task/user/api/functions.php");
 
 	$user_data = check_login($con);
 
