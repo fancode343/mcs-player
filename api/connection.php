@@ -2,10 +2,10 @@
 // Enable detailed error reporting
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-$dbhost = "gran-89a5cecf05.onlitegix.com";
-$dbuser = "ggmc";
-$dbpass = "thelegend";
-$dbname = "gran";
+$dbhost = "d0b.h.filess.io";
+$dbuser = "ggmc321_expressmap";
+$dbpass = "13119e57f3ad90c4efd6b1906fbf150a74b1a388";
+$dbname = "ggmc321_expressmap";
 
 try {
     $con = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
