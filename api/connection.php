@@ -15,7 +15,8 @@ try {
         throw new Exception("Connection failed: " . $con->connect_error);
     }
 
-    echo "Connected successfully";
+    // Comment out or remove this line
+    // echo "Connected successfully";
 } catch (Exception $e) {
     die("Error: " . $e->getMessage());
 }
