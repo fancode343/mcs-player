@@ -26,7 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     if ($user_data['email'] === $email) {
                         // Set session variable
                         $_SESSION['user_id'] = $user_data['user_id'];
-                        $_SESSION['season'] = $user_data['season'];  // Store season in session
+                        
+                        // Check if season exists in user_data
+                        if (isset($user_data['season'])) {
+                            $_SESSION['season'] = $user_data['season'];  // Store season in session
+                        } else {
+                            $_SESSION['season'] = null; // Or handle this case as needed
+                        }
 
                         // Debugging line to verify session is set
                         if (isset($_SESSION['user_id'])) {
@@ -62,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 // Close the database connection
 $con->close();
 ?>
+
 
 
 <!DOCTYPE html>
