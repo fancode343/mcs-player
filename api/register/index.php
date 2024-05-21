@@ -1,55 +1,54 @@
 <?php 
 session_start();
-ob_start(); // Start output buffering
 
-include("/var/task/user/api/connection.php");
-include("/var/task/user/api/functions.php");
+	include("/var/task/user/api/connection.php");
+	include("/var/task/user/api/functions.php");
 
-if($_SERVER['REQUEST_METHOD'] == "POST") {
-    // Get POST data
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $age = $_POST['age'];
-    $gender = $_POST['gender'];
-    $wdywtj = $_POST['wdywtj'];
-    $phoneCode = $_POST['phoneCode'];
-    $fbprof = $_POST['fbprof'];
-    $dsnm = $_POST['dsnm'];
 
-    // Validate input
-    if (!empty($username) && !empty($email) && !empty($age) && !empty($gender) && !empty($wdywtj) && !empty($phoneCode) && !empty($fbprof) && !empty($dsnm) && !is_numeric($username)) {
-        
-        // Save to database using prepared statements
-        $user_id = random_num(20);
-        $query = $con->prepare("INSERT INTO Users (user_id, username, email, age, gender, wdywtj, phoneCode, fbprof, dsnm) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $query->bind_param("sssssssss", $user_id, $username, $email, $age, $gender, $wdywtj, $phoneCode, $fbprof, $dsnm);
+	if($_SERVER['REQUEST_METHOD'] == "POST")
+	{
+		//something was posted
+		$username = $_POST['username'];
+		$email = $_POST['email'];
+		$age = $_POST['age'];
+		$gender = $_POST['gender'];
+		$wdywtj = $_POST['wdywtj'];
+	    $phoneCode = $_POST['phoneCode'];
+		$fbprof = $_POST['fbprof'];
+		$dsnm = $_POST['dsnm'];
 
-        if ($query->execute()) {
-            echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong>Success!</strong> You have been Successfully registered.
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                  </div>';
-        } else {
-            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Error!</strong> Registration failed. Please try again later.
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                  </div>';
-        }
-    } else {
-        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Error!</strong> Please enter valid information.
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-              </div>';
-    }
+		if(!empty($username) && !empty($email) && !empty($age) && !empty($gender) && !empty($wdywtj) && !empty($phoneCode) && !empty($fbprof) && !empty($dsnm) && !is_numeric($username))
+		{
+
+			//save to database
+			$user_id = random_num(20);
+			$query = "insert into Users (user_id,username,email,age,gender,wdywtj,phoneCode,fbprof,dsnm) values ('$user_id','$username','$email','$age','$gender','$wdywtj','$phoneCode','$fbprof','$dsnm')";
+
+
+			mysqli_query($con, $query);
+
+echo ' <div class="alert alert-success
+			alert-dismissible fade show" role="alert">
+	
+			<strong>Success!</strong> You have been Successfully registered.
+			<button type="button" class="close"
+				data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">×</span>
+			</button>
+		</div> ';
+		}else
+{
+echo ' <div class="alert alert-danger
+			alert-dismissible fade show" role="alert">
+	
+			<strong>Error!</strong> Please enter  Valid information.
+			<button type="button" class="close"
+				data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">×</span>
+			</button>
+		</div> ';
 }
-
-ob_end_flush(); // Flush the output buffer
+}
 ?>
 
 <!doctype html>
