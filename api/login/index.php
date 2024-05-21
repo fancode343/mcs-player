@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start(); // Ensure this is at the very beginning
 
 include("/var/task/user/api/connection.php");
 include("/var/task/user/api/functions.php");
@@ -22,14 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 if ($result->num_rows > 0) {
                     $user_data = $result->fetch_assoc();
 
-                    // Debugging line to check retrieved data
-                    file_put_contents('/var/task/user/apilogfile.txt', "User Data: " . print_r($user_data, true) . PHP_EOL, FILE_APPEND);
+                    // Debugging: Store user_data in session for later display
+                    $_SESSION['debug_user_data'] = $user_data;
 
                     // Verify the email
                     if ($user_data['email'] === $email) {
                         // Set session variable
                         $_SESSION['user_id'] = $user_data['user_id'];
-                        
+
                         // Check if season exists in user_data
                         if (isset($user_data['season'])) {
                             $_SESSION['season'] = $user_data['season'];  // Store season in session
@@ -37,40 +37,40 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                             $_SESSION['season'] = null; // Or handle this case as needed
                         }
 
-                        // Debugging line to verify session is set
-                        if (isset($_SESSION['user_id'])) {
-                            // Log session information for debugging
-                            file_put_contents('/var/task/user/logfile.txt', "Session user_id set to: " . $_SESSION['user_id'] . ", season: " . $_SESSION['season'] . PHP_EOL, FILE_APPEND);
+                        // Debugging: Store session data for later display
+                        $_SESSION['debug_session'] = $_SESSION;
 
-                            // Forward to dashboard
-                            header("Location: dashboard");
-                            exit;
-                        } else {
-                            echo "Failed to set session user_id.";
-                        }
+                        // Forward to dashboard
+                        header("Location: dashboard");
+                        exit;
                     } else {
-                        echo "Incorrect email for the given username.";
+                        $_SESSION['error'] = "Incorrect email for the given username.";
                     }
                 } else {
-                    echo "That Gamertag is not registered.";
+                    $_SESSION['error'] = "That Gamertag is not registered.";
                 }
             } else {
-                echo "Database query failed.";
+                $_SESSION['error'] = "Database query failed.";
             }
 
             // Close the statement
             $query->close();
         } else {
-            echo "Failed to prepare the SQL statement.";
+            $_SESSION['error'] = "Failed to prepare the SQL statement.";
         }
     } else {
-        echo "Please enter a valid username and email.";
+        $_SESSION['error'] = "Please enter a valid username and email.";
     }
+
+    // Redirect to self to display errors/debugging information
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
 }
 
 // Close the database connection
 $con->close();
 ?>
+
 
 
 
@@ -95,6 +95,24 @@ $con->close();
   <meta property="og:site_name" content="Guormit archives">
 </head>
 <body>
+
+	 <?php
+    // Display errors and debugging information if any
+    if (isset($_SESSION['error'])) {
+        echo "<p style='color:red;'>Error: " . $_SESSION['error'] . "</p>";
+        unset($_SESSION['error']); // Clear error after displaying
+    }
+
+    if (isset($_SESSION['debug_user_data'])) {
+        echo "<pre>User Data: " . print_r($_SESSION['debug_user_data'], true) . "</pre>";
+        unset($_SESSION['debug_user_data']); // Clear debug data after displaying
+    }
+
+    if (isset($_SESSION['debug_session'])) {
+        echo "<pre>Session Data: " . print_r($_SESSION['debug_session'], true) . "</pre>";
+        unset($_SESSION['debug_session']); // Clear debug data after displaying
+    }
+    ?>
 <!DOCTYPE html>
 <html>
   <head>
