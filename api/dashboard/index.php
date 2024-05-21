@@ -1,5 +1,12 @@
 <?php 
 session_start();
+
+if (!isset($_SESSION['user_id'])) {
+  // Redirect to login if not logged in
+  header("Location: login");
+  exit;
+}
+
 	include("/var/task/user/api/connection.php");
 	include("/var/task/user/api/functions.php");
 
