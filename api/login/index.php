@@ -22,6 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 if ($result->num_rows > 0) {
                     $user_data = $result->fetch_assoc();
 
+                    // Debugging line to check retrieved data
+                    file_put_contents('/path/to/logfile.txt', "User Data: " . print_r($user_data, true) . PHP_EOL, FILE_APPEND);
+
                     // Verify the email
                     if ($user_data['email'] === $email) {
                         // Set session variable
@@ -36,8 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
                         // Debugging line to verify session is set
                         if (isset($_SESSION['user_id'])) {
-                            // Optional: Log session information for debugging
-                            // file_put_contents('/path/to/logfile.txt', "Session user_id set to: " . $_SESSION['user_id'] . PHP_EOL, FILE_APPEND);
+                            // Log session information for debugging
+                            file_put_contents('/var/task/user/logfile.txt', "Session user_id set to: " . $_SESSION['user_id'] . ", season: " . $_SESSION['season'] . PHP_EOL, FILE_APPEND);
 
                             // Forward to dashboard
                             header("Location: dashboard");
