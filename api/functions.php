@@ -23,10 +23,6 @@ function check_login($con)
   exit;
 }
 
-
-
-}
-
 function random_num($length)
 {
 
