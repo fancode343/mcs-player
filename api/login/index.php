@@ -1,48 +1,39 @@
 <?php 
-
 session_start();
 
-	include("/var/task/user/api/connection.php");
-	include("/var/task/user/api/functions.php");
+include("/var/task/user/api/connection.php");
+include("/var/task/user/api/functions.php");
 
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    //something was posted
+    $username = $_POST['username'];
+    $email = $_POST['email'];
 
-	if($_SERVER['REQUEST_METHOD'] == "POST")
-	{
-		//something was posted
-		$username = $_POST['username'];
-		$email = $_POST['email'];
+    if (!empty($username) && !empty($email) && !is_numeric($username)) {
+        //read from database
+        $query = "SELECT * FROM Users WHERE username = '$username' LIMIT 1";
+        $result = mysqli_query($con, $query);
 
-		if(!empty($username) && !empty($email) && !is_numeric($username))
-		{
-
-			//read from database
-			$query = "select * from Users where username = '$username' limit 1";
-			$result = mysqli_query($con, $query);
-
-			if($result)
-			{
-				if($result && mysqli_num_rows($result) > 0)
-				{
-
-					$user_data = mysqli_fetch_assoc($result);
-					
-					if($user_data['email'] === $email)
-					{
-
-						$_SESSION['user_id'] = $user_data['user_id'];
-						header("Location: ../dashboard");
-						die;
-					}
-				}
-			}
-			
-			echo "that Gamertag not registered";
-		}else
-		{
-			echo "that Email not registered";
-		}
-	}
-
+        if ($result) {
+            if (mysqli_num_rows($result) > 0) {
+                $user_data = mysqli_fetch_assoc($result);
+                if ($user_data['email'] === $email) {
+                    $_SESSION['user_id'] = $user_data['user_id'];
+                    header("Location: ../dashboard");
+                    die;
+                } else {
+                    echo "Incorrect email for the given username.";
+                }
+            } else {
+                echo "That Gamertag is not registered.";
+            }
+        } else {
+            echo "Database query failed.";
+        }
+    } else {
+        echo "Please enter a valid username and email.";
+    }
+}
 ?>
 
 
