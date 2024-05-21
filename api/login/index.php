@@ -1,72 +1,49 @@
-<?php
-session_start(); // Ensure this is at the very beginning
+<?php 
 
-include("/var/task/user/api/connection.php");
-include("/var/task/user/api/functions.php");
+session_start();
 
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    // Something was posted
-    $username = $_POST['username'];
-    $email = $_POST['email'];
+	include("/var/task/user/api/connection.php");
+	include("/var/task/user/api/functions.php");
 
-    // Check if inputs are not empty and username is not numeric
-    if (!empty($username) && !empty($email) && !is_numeric($username)) {
-        // Use prepared statements to prevent SQL injection
-        if ($query = $con->prepare("SELECT * FROM Users WHERE username = ? LIMIT 1")) {
-            $query->bind_param("s", $username);
-            $query->execute();
-            $result = $query->get_result();
 
-            // Check if the query returned a result
-            if ($result) {
-                if ($result->num_rows > 0) {
-                    $user_data = $result->fetch_assoc();
+	if($_SERVER['REQUEST_METHOD'] == "POST")
+	{
+		//something was posted
+		$username = $_POST['username'];
+		$email = $_POST['email'];
 
-                    // Debugging: Store user_data in session for later display
-                    $_SESSION['debug_user_data'] = $user_data;
+		if(!empty($username) && !empty($email) && !is_numeric($username))
+		{
 
-                    // Verify the email
-                    if ($user_data['email'] === $email) {
-                        // Set session variable
-                        $_SESSION['user_id'] = $user_data['user_id'];
+			//read from database
+			$query = "select * from Users where username = '$username' limit 1";
+			$result = mysqli_query($con, $query);
 
-                        // Check if season exists in user_data
-                        if (isset($user_data['season'])) {
-                            $_SESSION['season'] = $user_data['season'];  // Store season in session
-                        } else {
-                            $_SESSION['season'] = null; // Or handle this case as needed
-                        }
+			if($result)
+			{
+				if($result && mysqli_num_rows($result) > 0)
+				{
 
-                        // Debugging: Store session data for later display
-                        $_SESSION['debug_session'] = $_SESSION;
+					$user_data = mysqli_fetch_assoc($result);
+					
+					if($user_data['email'] === $email)
+					{
 
-                        // Forward to dashboard
-                        header("Location: dashboard");
-                        exit;
-                    } else {
-                        $_SESSION['error'] = "Incorrect email for the given username.";
-                    }
-                } else {
-                    $_SESSION['error'] = "That Gamertag is not registered.";
-                }
-            } else {
-                $_SESSION['error'] = "Database query failed.";
-            }
+						$_SESSION['user_id'] = $user_data['user_id'];
+						header("Location: dashboard");
+						die;
+					}
+				}
+			}
+			
+			echo "that Gamertag not registered";
+		}else
+		{
+			echo "that Email not registered";
+		}
+	}
 
-            // Close the statement
-            $query->close();
-        } else {
-            $_SESSION['error'] = "Failed to prepare the SQL statement.";
-        }
-    } else {
-        $_SESSION['error'] = "Please enter a valid username and email.";
-    }
-
-    // Redirect to self to display errors/debugging information
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
-}
-
+?>
 
 
 <!DOCTYPE html>
@@ -90,24 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   <meta property="og:site_name" content="Guormit archives">
 </head>
 <body>
-
-    <?php
-    // Display errors and debugging information if any
-    if (isset($_SESSION['error'])) {
-        echo "<p style='color:red;'>Error: " . $_SESSION['error'] . "</p>";
-        unset($_SESSION['error']); // Clear error after displaying
-    }
-
-    if (isset($_SESSION['debug_user_data'])) {
-        echo "<pre>User Data: " . print_r($_SESSION['debug_user_data'], true) . "</pre>";
-        unset($_SESSION['debug_user_data']); // Clear debug data after displaying
-    }
-
-    if (isset($_SESSION['debug_session'])) {
-        echo "<pre>Session Data: " . print_r($_SESSION['debug_session'], true) . "</pre>";
-        unset($_SESSION['debug_session']); // Clear debug data after displaying
-    }
-    ?>
 <!DOCTYPE html>
 <html>
   <head>
