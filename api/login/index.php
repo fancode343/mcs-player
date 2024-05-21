@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     $user_data = $result->fetch_assoc();
 
                     // Debugging line to check retrieved data
-                    file_put_contents('/path/to/logfile.txt', "User Data: " . print_r($user_data, true) . PHP_EOL, FILE_APPEND);
+                    file_put_contents('/var/task/user/apilogfile.txt', "User Data: " . print_r($user_data, true) . PHP_EOL, FILE_APPEND);
 
                     // Verify the email
                     if ($user_data['email'] === $email) {
