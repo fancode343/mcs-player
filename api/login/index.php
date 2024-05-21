@@ -9,41 +9,57 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $username = $_POST['username'];
     $email = $_POST['email'];
 
+    // Check if inputs are not empty and username is not numeric
     if (!empty($username) && !empty($email) && !is_numeric($username)) {
-        // Read from database using prepared statements to prevent SQL injection
-        $query = $con->prepare("SELECT * FROM Users WHERE username = ? LIMIT 1");
-        $query->bind_param("s", $username);
-        $query->execute();
-        $result = $query->get_result();
+        // Use prepared statements to prevent SQL injection
+        if ($query = $con->prepare("SELECT * FROM Users WHERE username = ? LIMIT 1")) {
+            $query->bind_param("s", $username);
+            $query->execute();
+            $result = $query->get_result();
 
-        if ($result) {
-            if ($result->num_rows > 0) {
-                $user_data = $result->fetch_assoc();
-                if ($user_data['email'] === $email) {
-                    $_SESSION['user_id'] = $user_data['user_id'];
+            // Check if the query returned a result
+            if ($result) {
+                if ($result->num_rows > 0) {
+                    $user_data = $result->fetch_assoc();
 
-                    // Debugging line to verify session is set
-                    if (isset($_SESSION['user_id'])) {
-                        // Optionally, you can write to a log file
-                        // file_put_contents('/path/to/logfile.txt', "Session user_id set to: " . $_SESSION['user_id'] . PHP_EOL, FILE_APPEND);
-                        header("Location: dashboard");
-                        exit;
+                    // Verify the email
+                    if ($user_data['email'] === $email) {
+                        // Set session variable
+                        $_SESSION['user_id'] = $user_data['user_id'];
+
+                        // Debugging line to verify session is set
+                        if (isset($_SESSION['user_id'])) {
+                            // Optional: Log session information for debugging
+                            // file_put_contents('/path/to/logfile.txt', "Session user_id set to: " . $_SESSION['user_id'] . PHP_EOL, FILE_APPEND);
+
+                            // Forward to dashboard
+                            header("Location: dashboard");
+                            exit;
+                        } else {
+                            echo "Failed to set session user_id.";
+                        }
                     } else {
-                        echo "Failed to set session user_id.";
+                        echo "Incorrect email for the given username.";
                     }
                 } else {
-                    echo "Incorrect email for the given username.";
+                    echo "That Gamertag is not registered.";
                 }
             } else {
-                echo "That Gamertag is not registered.";
+                echo "Database query failed.";
             }
+
+            // Close the statement
+            $query->close();
         } else {
-            echo "Database query failed.";
+            echo "Failed to prepare the SQL statement.";
         }
     } else {
         echo "Please enter a valid username and email.";
     }
 }
+
+// Close the database connection
+$con->close();
 ?>
 
 
