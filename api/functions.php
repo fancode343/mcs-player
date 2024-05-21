@@ -2,43 +2,34 @@
 
 function check_login($con)
 {
+    if (isset($_SESSION['user_id'])) {
+        $id = $_SESSION['user_id'];
+        $query = "SELECT * FROM Users WHERE user_id = '$id' LIMIT 1";
 
-	if(isset($_SESSION['user_id']))
-	{
+        $result = mysqli_query($con, $query);
+        if ($result && mysqli_num_rows($result) > 0) {
+            $user_data = mysqli_fetch_assoc($result);
+            return $user_data;
+        }
+    }
 
-		$id = $_SESSION['user_id'];
-		$query = "select * from Users where user_id = '$id' limit 1";
-
-		$result = mysqli_query($con,$query);
-		if($result && mysqli_num_rows($result) > 0)
-		{
-
-			$user_data = mysqli_fetch_assoc($result);
-			return $user_data;
-		}
-	}
-
-	//redirect to login
-  header("Location: login");
-  exit;
+    // Redirect to login
+    header("Location: login");
+    exit;
 }
 
 function random_num($length)
 {
+    $text = "";
+    if ($length < 5) {
+        $length = 5;
+    }
 
-	$text = "";
-	if($length < 5)
-	{
-		$length = 5;
-	}
+    $len = rand(4, $length);
 
-	$len = rand(4,$length);
+    for ($i = 0; $i < $len; $i++) {
+        $text .= rand(0, 9);
+    }
 
-	for ($i=0; $i < $len; $i++) { 
-		# code...
-
-		$text .= rand(0,9);
-	}
-
-	return $text;
+    return $text;
 }
