@@ -67,11 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     exit;
 }
 
-// Close the database connection
-$con->close();
-?>
-
-
 
 
 <!DOCTYPE html>
@@ -96,7 +91,7 @@ $con->close();
 </head>
 <body>
 
-	 <?php
+    <?php
     // Display errors and debugging information if any
     if (isset($_SESSION['error'])) {
         echo "<p style='color:red;'>Error: " . $_SESSION['error'] . "</p>";
