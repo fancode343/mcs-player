@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $user_data = mysqli_fetch_assoc($result);
                 if ($user_data['email'] === $email) {
                     $_SESSION['user_id'] = $user_data['user_id'];
-                    header("Location: ../dashboard");
+                    header("Location: dashboard");
                     die;
                 } else {
                     echo "Incorrect email for the given username.";
