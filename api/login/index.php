@@ -5,22 +5,24 @@ include("/var/task/user/api/connection.php");
 include("/var/task/user/api/functions.php");
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    //something was posted
+    // something was posted
     $username = $_POST['username'];
     $email = $_POST['email'];
 
     if (!empty($username) && !empty($email) && !is_numeric($username)) {
-        //read from database
-        $query = "SELECT * FROM Users WHERE username = '$username' LIMIT 1";
-        $result = mysqli_query($con, $query);
+        // read from database using prepared statements to prevent SQL injection
+        $query = $con->prepare("SELECT * FROM Users WHERE username = ? LIMIT 1");
+        $query->bind_param("s", $username);
+        $query->execute();
+        $result = $query->get_result();
 
         if ($result) {
-            if (mysqli_num_rows($result) > 0) {
-                $user_data = mysqli_fetch_assoc($result);
+            if ($result->num_rows > 0) {
+                $user_data = $result->fetch_assoc();
                 if ($user_data['email'] === $email) {
                     $_SESSION['user_id'] = $user_data['user_id'];
                     header("Location: dashboard");
-                    die;
+                    exit;
                 } else {
                     echo "Incorrect email for the given username.";
                 }
