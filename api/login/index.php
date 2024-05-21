@@ -5,12 +5,12 @@ include("/var/task/user/api/connection.php");
 include("/var/task/user/api/functions.php");
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    // something was posted
+    // Something was posted
     $username = $_POST['username'];
     $email = $_POST['email'];
 
     if (!empty($username) && !empty($email) && !is_numeric($username)) {
-        // read from database using prepared statements to prevent SQL injection
+        // Read from database using prepared statements to prevent SQL injection
         $query = $con->prepare("SELECT * FROM Users WHERE username = ? LIMIT 1");
         $query->bind_param("s", $username);
         $query->execute();
@@ -21,8 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $user_data = $result->fetch_assoc();
                 if ($user_data['email'] === $email) {
                     $_SESSION['user_id'] = $user_data['user_id'];
-                    header("Location: dashboard");
-                    exit;
+
+                    // Debugging line to verify session is set
+                    if (isset($_SESSION['user_id'])) {
+                        // Optionally, you can write to a log file
+                        // file_put_contents('/path/to/logfile.txt', "Session user_id set to: " . $_SESSION['user_id'] . PHP_EOL, FILE_APPEND);
+                        header("Location: dashboard");
+                        exit;
+                    } else {
+                        echo "Failed to set session user_id.";
+                    }
                 } else {
                     echo "Incorrect email for the given username.";
                 }
