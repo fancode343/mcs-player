@@ -1,6 +1,15 @@
 <?php
 session_start();
 
+if (isset($user_data['season'])) { // Assuming 'season' is retrieved from user data
+  $_SESSION['season'] = $user_data['season'];  // Store season in session
+  header("Location: dashboard"); // Redirect to dashboard if season found
+  exit;
+} else {
+  // Handle the case where season is not found (optional: redirect or display message)
+}
+
+
 include("/var/task/user/api/connection.php");
 include("/var/task/user/api/functions.php");
 
