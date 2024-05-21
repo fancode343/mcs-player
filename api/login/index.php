@@ -1,77 +1,62 @@
 <?php
 session_start();
 
-if (isset($user_data['season'])) { // Assuming 'season' is retrieved from user data
-  $_SESSION['season'] = $user_data['season'];  // Store season in session
-  header("Location: dashboard"); // Redirect to dashboard if season found
-  exit;
-} else {
-  // Handle the case where season is not found (optional: redirect or display message)
-}
-
-
 include("/var/task/user/api/connection.php");
 include("/var/task/user/api/functions.php");
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-  // Something was posted
-  $username = $_POST['username'];
-  $email = $_POST['email'];
+    // Something was posted
+    $username = $_POST['username'];
+    $email = $_POST['email'];
 
-  // Check if inputs are not empty and username is not numeric
-  if (!empty($username) && !empty($email) && !is_numeric($username)) {
-    // Use prepared statements to prevent SQL injection
-    if ($query = $con->prepare("SELECT * FROM Users WHERE username = ? LIMIT 1")) {
-      $query->bind_param("s", $username);
-      $query->execute();
-      $result = $query->get_result();
+    // Check if inputs are not empty and username is not numeric
+    if (!empty($username) && !empty($email) && !is_numeric($username)) {
+        // Use prepared statements to prevent SQL injection
+        if ($query = $con->prepare("SELECT * FROM Users WHERE username = ? LIMIT 1")) {
+            $query->bind_param("s", $username);
+            $query->execute();
+            $result = $query->get_result();
 
-      // Check if the query returned a result
-      if ($result) {
-        if ($result->num_rows > 0) {
-          $user_data = $result->fetch_assoc();
+            // Check if the query returned a result
+            if ($result) {
+                if ($result->num_rows > 0) {
+                    $user_data = $result->fetch_assoc();
 
-          // Verify the email
-          if ($user_data['email'] === $email) {
-            // Set session variable
-            $_SESSION['user_id'] = $user_data['user_id'];
+                    // Verify the email
+                    if ($user_data['email'] === $email) {
+                        // Set session variable
+                        $_SESSION['user_id'] = $user_data['user_id'];
+                        $_SESSION['season'] = $user_data['season'];  // Store season in session
 
-            // Debugging line to verify session is set
-            if (isset($_SESSION['user_id'])) {
-              // Optional: Log session information for debugging
-              // file_put_contents('/path/to/logfile.txt', "Session user_id set to: " . $_SESSION['user_id'] . PHP_EOL, FILE_APPEND);
+                        // Debugging line to verify session is set
+                        if (isset($_SESSION['user_id'])) {
+                            // Optional: Log session information for debugging
+                            // file_put_contents('/path/to/logfile.txt', "Session user_id set to: " . $_SESSION['user_id'] . PHP_EOL, FILE_APPEND);
 
-              // Check for season data (assuming it's stored in the user data)
-              if (isset($user_data['season'])) {
-                // Handle season data here (e.g., display it on the dashboard)
-              } else {
-                // Handle the case where there's no season data
-              }
-
-              // Forward to dashboard
-              header("Location: dashboard");
-              exit;
+                            // Forward to dashboard
+                            header("Location: dashboard");
+                            exit;
+                        } else {
+                            echo "Failed to set session user_id.";
+                        }
+                    } else {
+                        echo "Incorrect email for the given username.";
+                    }
+                } else {
+                    echo "That Gamertag is not registered.";
+                }
             } else {
-              echo "Failed to set session user_id.";
+                echo "Database query failed.";
             }
-          } else {
-            echo "Incorrect email for the given username.";
-          }
-        } else {
-          echo "That Gamertag is not registered.";
-        }
-      } else {
-        echo "Database query failed.";
-      }
 
-      // Close the statement
-      $query->close();
+            // Close the statement
+            $query->close();
+        } else {
+            echo "Failed to prepare the SQL statement.";
+        }
     } else {
-      echo "Failed to prepare the SQL statement.";
+        echo "Please enter a valid username and email.";
     }
-  } else {
-    echo "Please enter a valid username and email.";
-  }
 }
 
 // Close the database connection
