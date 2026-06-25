@@ -1,4 +1,5 @@
 # mcs-player
 
-OUTDATED: 
+**OUTDATED:**
 
+This Project Was Abandoned by the Developer.
